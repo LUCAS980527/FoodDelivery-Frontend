@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import SignUpLayout from "./SignUpLayout";
 import Mail from "@/app/_components/mail";
 import PasswordTwo from "@/app/_components/password";
+import axios from "axios";
 
 export default function CombinedSignUp() {
   const router = useRouter();
@@ -16,13 +17,14 @@ export default function CombinedSignUp() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [apiError, setApiError] = useState("");
 
   const handleNext = () => {
     if (!email) {
       setEmailError("Please enter your email");
       return;
     }
-    //
+
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!regex.test(email)) {
       setEmailError("Please enter a valid email");
@@ -32,7 +34,27 @@ export default function CombinedSignUp() {
     setStep(2);
   };
 
-  const handleFinish = () => {
+  const createUser = async (email, password) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:1000/authentication/signup",
+        {
+          email,
+          password,
+        }
+      );
+
+      router.push("/login");
+    } catch (err) {
+      if (err.response?.data) {
+        setApiError(err.response.data);
+      } else {
+        setApiError("Something went wrong. Please try again.");
+      }
+    }
+  };
+
+  const handleFinish = async () => {
     if (!password) {
       setPasswordError("Please enter your password");
       return;
@@ -45,8 +67,10 @@ export default function CombinedSignUp() {
       setPasswordError("Passwords do not match");
       return;
     }
+
     setPasswordError("");
-    router.push("/login");
+
+    await createUser(email, password);
   };
 
   return (
@@ -85,6 +109,8 @@ export default function CombinedSignUp() {
           {passwordError && (
             <p className="text-red-500 text-sm mt-1">{passwordError}</p>
           )}
+
+          {apiError && <p className="text-red-500 text-sm">{apiError}</p>}
 
           <button
             onClick={handleFinish}

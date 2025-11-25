@@ -31,7 +31,7 @@ export default function LoginLayout({
 
       <div className="hidden md:block">
         <Image
-          src="/SignUpPoster.png"
+          src="/delivery.png"
           alt="Login Poster"
           width={856}
           height={904}

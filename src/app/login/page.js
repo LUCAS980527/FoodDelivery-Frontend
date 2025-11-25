@@ -67,7 +67,7 @@ export default function LoginPage() {
         Don’t have an account?{" "}
         <button
           className="text-blue-600 font-medium hover:underline cursor-pointer"
-          onClick={() => router.push("/signup")}
+          onClick={() => router.push("/admin")}
         >
           Sign up
         </button>

@@ -7,7 +7,7 @@ export default function UserHomePage() {
       <Header />
       <div className="relative w-full aspect-[1440/570]">
         <Image
-          src="/UserMainPoster.png"
+          src="/dilivery.png"
           alt="UserMainPoster"
           fill
           className="object-cover"
