@@ -1,39 +1,29 @@
 "use client";
 
 import Image from "next/image";
-//
+
 export default function FoodCard({ image, name, description, price }) {
   return (
-    <div
-      className="flex flex-col items-start gap-5 p-4 rounded-[20px] border border-[#E4E4E7] bg-[#FFF]"
-      style={{
-        width: "270.75px",
-        height: "241px",
-        flex: "1 0 0",
-        alignSelf: "stretch",
-      }}
-    >
-      <div className="w-full h-[120px] relative">
+    <div className="flex flex-col gap-4 p-4 rounded-2xl border border-zinc-200 bg-white w-[270px]">
+      <div className="relative w-full h-[120px]">
         <Image
           src={image}
           alt={name}
           fill
-          className="object-cover rounded-[12px] w-[238.75px] h-[129px]"
+          className="object-cover rounded-xl"
         />
       </div>
 
-      <div className="flex flex-col items-start gap-1">
-        <div className="flex flex-row gap-2.5 justify-between w-[238.75px] h-5 items-center">
-          <h3 className="text-base font-semibold text-[14px] text-red-500 w-[189.75px]">
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center justify-between">
+          <h3 className="text-[15px] font-semibold text-red-500 truncate">
             {name}
           </h3>
-          <span className="text-[12px] font-medium text-[#09090B] ">
-            {price}
-          </span>
+
+          <span className="text-sm font-semibold text-black">{price}</span>
         </div>
-        <p className="text-sm text-[#71717A] line-clamp-2 w-[238.75px] h-8 text-[12px]">
-          {description}
-        </p>
+
+        <p className="text-[13px] text-zinc-600 line-clamp-2">{description}</p>
       </div>
     </div>
   );

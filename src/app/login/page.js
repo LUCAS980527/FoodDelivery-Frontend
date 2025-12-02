@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,15 +13,35 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [apiError, setApiError] = useState("");
+
+  const loginUser = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:1000/authentication/login",
+        { email, password }
+      );
+
+      router.push("/app");
+    } catch (err) {
+      if (err.response?.data) {
+        setApiError(err.response.data.message || err.response.data);
+      } else {
+        setApiError("Something went wrong. Please try again.");
+      }
+    }
+  };
 
   const handleLogin = () => {
     if (!email || !password) {
       setError("Please enter both email and password");
       return;
     }
-    console.log("Login attempt:", { email, password });
 
-    router.push("/");
+    setError("");
+    setApiError("");
+
+    loginUser();
   };
 
   return (
@@ -46,6 +67,8 @@ export default function LoginPage() {
       </Field>
 
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+
+      {apiError && <p className="text-red-500 text-sm mt-1">{apiError}</p>}
 
       <div className="flex justify-between items-center text-sm mt-1">
         <button
