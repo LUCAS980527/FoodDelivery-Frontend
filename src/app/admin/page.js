@@ -1,15 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AvatarIcon from "../_icons/AvatarIcon";
 import { PlusIcon } from "lucide-react";
 import FoodCard from "../_components/FoodCard";
 import Sidebar from "../_components/SideBar";
 import OrdersSection from "../_components/OrderSection";
 import AddCategoryDialog from "../_components/AddCategoryDialog";
+import AddDishDialog from "../_components/AddDishDialog";
+import axios from "axios";
 
 export default function AdminPage({ selected, onSelect }) {
   const [activeMenu, setActiveMenu] = useState("food");
+  const [categoryData, setCategoryData] = useState([]);
 
   const [categories, setCategories] = useState([
     { id: "Salads", label: "Salads" },
@@ -23,6 +26,36 @@ export default function AdminPage({ selected, onSelect }) {
     { id: "Beverages", label: "Beverages" },
     { id: "Appetizers", label: "Appetizers" },
   ]);
+
+  const [dishes, setDishes] = useState({
+    Salads: [],
+    Pizzas: [],
+    LunchFavorites: [],
+    MainDishes: [],
+  });
+
+  const getData = async () => {
+    try {
+      const response = await axios.get("http://localhost:1000/food-Category");
+      setCategoryData(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  console.log("categoryData", categoryData);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    getData();
+  }, []);
+
+  const addDish = (dish) => {
+    setDishes((prev) => ({
+      ...prev,
+      [selected]: [...(prev[selected] || []), dish],
+    }));
+  };
 
   const addCategory = (name) => {
     const newCategory = {
@@ -46,19 +79,19 @@ export default function AdminPage({ selected, onSelect }) {
             <div className="flex flex-col bg-[#FFF] w-full  p-4 border-t border-[#E4E4E7] rounded-lg shadow-sm gap-4">
               <div className="font-bold text-[20px]">Dishes category</div>
 
-              <div className="flex flex-row w-[525px] justify-between gap-3">
+              <div className="flex flex-row w-full justify-between gap-3">
                 <button className="flex h-[36px] px-[16px] py-[8px] items-center gap-[8px] rounded-full border border-red-500 bg-white">
                   <div className="text-[#18181B] text-[14px] font-medium">
                     All Dishes
                   </div>
                 </button>
 
-                <div className="flex gap-3 flex-wrap w-[1171px]">
+                <div className="flex flex-row gap-3 flex-wrap w-full">
                   {categories.map((cat) => (
                     <button
                       key={cat.id}
                       onClick={() => onSelect(cat.id)}
-                      className={`flex h-9 px-4 py-2 items-center gap-2 rounded-full border bg-white text-sm font-medium transition
+                      className={`flex h-9 px-4 py-2 items-center rounded-full border bg-white text-sm font-medium 
                         ${
                           selected === cat.id
                             ? "border-red-500 text-red-500"
@@ -76,17 +109,22 @@ export default function AdminPage({ selected, onSelect }) {
 
             <div className="flex flex-col bg-[#FFF] w-full p-4 border-t border-[#E4E4E7] rounded-lg shadow-sm gap-4 text-[#09090B] text-[20px] font-semibold">
               Salads
-              <div className="flex bg-[#FFF] w-full gap-4">
-                <div className="flex flex-col justify-center items-center gap-6 px-4 py-2 rounded-[20px] border border-dashed border-[#EF4444] w-[270.75px] h-[241px]">
-                  <button className="rounded-full bg-red-500 w-[40px] h-[40px] flex items-center justify-center">
-                    <PlusIcon />
-                  </button>
+              <div className="flex bg-[#FFF] w-full ">
+                <div>
                   <div className="text-center text-sm font-medium leading-5 w-[154px]">
-                    Add new Dish to Salads
+                    <AddDishDialog onAdd={addDish} />
                   </div>
                 </div>
 
-                <FoodCard />
+                {dishes[selected]?.map((dish, index) => (
+                  <FoodCard
+                    key={index}
+                    image={dish.image}
+                    name={dish.name}
+                    description={dish.description}
+                    price={dish.price}
+                  />
+                ))}
               </div>
             </div>
           </div>
