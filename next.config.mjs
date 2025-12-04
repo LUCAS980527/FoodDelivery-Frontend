@@ -1,6 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "fs2.tvoydnevnik.com",
+        pathname: "/api2/**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

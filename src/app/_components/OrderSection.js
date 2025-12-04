@@ -33,7 +33,7 @@ export default function OrdersSection() {
       </div>
 
       <div className="flex flex-col gap-4">
-        {Array(4)
+        {/* {Array(4)
           .fill(0)
           .map((_, i) => (
             <div
@@ -56,7 +56,7 @@ export default function OrdersSection() {
                 {filter.toUpperCase()}
               </div>
             </div>
-          ))}
+          ))} */}
       </div>
     </div>
   );

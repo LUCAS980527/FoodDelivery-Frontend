@@ -21,7 +21,7 @@ export default function AddDishDialog({ onAdd }) {
 
   const addDish = () => {
     if (!name || !price) return;
-    onAdd({ name, price, description: desc, image });
+    onAdd({ name, price, desc, image });
     setName("");
     setPrice("");
     setDesc("");
@@ -32,9 +32,9 @@ export default function AddDishDialog({ onAdd }) {
     <Dialog>
       <DialogTrigger>
         <div className="flex flex-col justify-center items-center gap-6 px-4 py-2 rounded-[20px] border border-dashed border-[#EF4444] w-[270px] h-[241px] cursor-pointer">
-          <Button className="rounded-full bg-red-500 w-[40px] h-[40px] flex items-center justify-center">
+          <div className="rounded-full bg-red-500 w-[40px] h-[40px] flex items-center justify-center">
             <PlusIcon />
-          </Button>
+          </div>
           <div className="text-center text-sm font-medium">Add new Dish</div>
         </div>
       </DialogTrigger>
@@ -58,12 +58,14 @@ export default function AddDishDialog({ onAdd }) {
           />
 
           <Textarea
-            placeholder="Description"
+            placeholder="ingredient
+"
             value={desc}
             onChange={(e) => setDesc(e.target.value)}
           />
 
           <Input
+            // type="file"
             placeholder="Image URL"
             value={image}
             onChange={(e) => setImage(e.target.value)}

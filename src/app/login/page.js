@@ -21,8 +21,11 @@ export default function LoginPage() {
         "http://localhost:1000/authentication/login",
         { email, password }
       );
+      console.log("response", response);
 
-      router.push("/app");
+      localStorage.setItem("token", response.data.token);
+
+      router.push("/admin");
     } catch (err) {
       if (err.response?.data) {
         setApiError(err.response.data.message || err.response.data);
@@ -90,7 +93,7 @@ export default function LoginPage() {
         Don’t have an account?{" "}
         <button
           className="text-blue-600 font-medium hover:underline cursor-pointer"
-          onClick={() => router.push("/admin")}
+          onClick={() => router.push("/signup")}
         >
           Sign up
         </button>
