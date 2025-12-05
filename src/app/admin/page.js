@@ -8,12 +8,14 @@ import OrdersSection from "../_components/OrderSection";
 import AddCategoryDialog from "../_components/AddCategoryDialog";
 import AddDishDialog from "../_components/AddDishDialog";
 import axios from "axios";
+import { Badge } from "lucide-react";
+import { FoodSection } from "../_components/FoodSection";
 
 export default function AdminPage({ selected, onSelect }) {
   const [activeMenu, setActiveMenu] = useState("food");
   const [categoryData, setCategoryData] = useState([]);
   const [foodData, setFoodData] = useState([]);
-  // console.log("categoryData", categoryData);
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   const getData = async () => {
     try {
@@ -26,10 +28,21 @@ export default function AdminPage({ selected, onSelect }) {
 
   // console.log("categoryData", categoryData);
 
-  const getFoodData = async () => {
+  // const getFoodData = async () => {
+  //   try {
+  //     const response = await axios.get("http://localhost:1000/food");
+  //     setFoodData(response.data);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+  const getFoodData = async (categoryId) => {
     try {
-      const response = await axios.get("http://localhost:1000/food");
+      const response = await axios.get(
+        `http://localhost:1000/food/${categoryId}`
+      );
       setFoodData(response.data);
+      console.log("data", response.data);
     } catch (err) {
       console.log(err);
     }
@@ -70,37 +83,21 @@ export default function AdminPage({ selected, onSelect }) {
           Authorization: `Bearer ${token}`,
         },
       });
-      getData(); // refresh the category list after deletion
+      getData();
     } catch (err) {
       alert(err);
       console.log(err, "err");
     }
   };
 
-  const addDish = async (dish) => {
-    console.log("dish", dish);
-    try {
-      await axios.post("http://localhost:1000/food", {
-        foodname: dish.name,
-        ingredients: dish.desc,
-        price: dish.price,
-        image: dish.image,
-        categoryId: "69243a5b5356af4dafe773a3",
-      });
-      getFoodData();
-    } catch (err) {
-      alert(err);
-    }
-  };
-
   const getFilteredFoods = () => {
-    if (!selected) {
+    if (!selectedCategory) {
       return foodData;
     }
-    return foodData.filter(
-      (food) =>
-        food.categoryId === selected.id || food.categoryId === selected.id
-    );
+    return foodData.filter((food) => food.categoryId === selectedCategory);
+  };
+  const getFoodCount = (categoryId) => {
+    return foodData.filter((food) => food.categoryId === categoryId).length;
   };
 
   return (
@@ -118,7 +115,10 @@ export default function AdminPage({ selected, onSelect }) {
               <div className="font-bold text-[20px]">Dishes category</div>
 
               <div className="flex flex-row w-full justify-between gap-3">
-                <button className="flex h-[36px] px-[16px] py-[8px] items-center gap-[8px] rounded-full border border-red-500 bg-white">
+                <button
+                  className="flex h-[36px] px-[16px] py-[8px] items-center gap-[8px] rounded-full border border-red-500 bg-white"
+                  onClick={() => setSelectedCategory("")}
+                >
                   <div className="text-[#18181B] text-[14px] font-medium w-[145px]">
                     All Dishes
                   </div>
@@ -131,14 +131,17 @@ export default function AdminPage({ selected, onSelect }) {
                       className="relative group flex items-center"
                     >
                       <button
-                        onClick={() => onSelect(category)}
-                        className={`flex h-9 px-4 py-2 items-center rounded-full border bg-white text-sm font-medium ${
+                        onClick={() => setSelectedCategory(category._id)}
+                        className={`flex h-9 px-4 py-2 items-center rounded-full gap-4 border bg-white text-sm font-medium ${
                           selected === category
                             ? "border-red-500 text-red-500"
                             : "border-zinc-300 text-zinc-800"
                         }`}
                       >
                         {category.categoryName}
+                        <Badge className="rounded-full bg-[#18181B] text-white w-5 h-5 flex items-center justify-center text-[10px]">
+                          {getFoodCount(category._id)}
+                        </Badge>
                       </button>
 
                       <button
@@ -155,26 +158,68 @@ export default function AdminPage({ selected, onSelect }) {
               </div>
             </div>
 
-            <div className="flex flex-col bg-[#FFF] w-full p-4 border-t border-[#E4E4E7] rounded-lg shadow-sm gap-4 text-[#09090B] text-[20px] font-semibold">
-              Salads
-              <div className="flex bg-[#FFF] w-full gap-4">
-                <div>
-                  <div className="text-center text-sm font-medium leading-5 ">
-                    <AddDishDialog onAdd={addDish} />
+            {/* {categoryData.map((category) => {
+                const foodsInCategory = foodData.filter(
+                  (food) => food.categoryId === category._id
+                );
+
+                return (
+                  <div key={category._id} className="space-y-4">
+                    <h2 className="text-[20px] font-semibold text-[#09090B] flex items-center gap-2">
+                      {category.categoryName}
+
+                      <span className="px-2 py-1 text-xs bg-black text-white rounded-full">
+                        {foodsInCategory.length}
+                      </span>
+                    </h2>
+
+                    <div className="w-[270px]">
+                      <AddDishDialog
+                        categoryId={category._id}
+                        onAdd={(dish, categoryId) => addDish(dish, categoryId)}
+                      />
+                    </div>
+
+                    <div className="flex flex-wrap gap-4">
+                      {foodsInCategory.map((food) => (
+                        <FoodCard
+                          key={food._id}
+                          image={food.image}
+                          name={food.foodname}
+                          ingredients={food.ingredients}
+                          price={food.price}
+                        />
+                      ))}
+                    </div>
                   </div>
+                );
+              })} */}
+            {categoryData.map((item, index) => (
+              <div
+                key={item._id || index}
+                className="w-full min-h-[325px] p-5 border border-[#E4E4E7] flex flex-col gap-4 bg-white rounded-xl"
+              >
+                <div className="text-[20px] font-medium">
+                  {item.categoryName}
                 </div>
 
-                {getFilteredFoods().map((food) => (
-                  <FoodCard
-                    key={food._id || food.id}
-                    image={food.image}
-                    name={food.foodname}
-                    ingredients={food.ingredients}
-                    price={food.price}
+                <div className="flex flex-row gap-4 flex-wrap">
+                  <AddDishDialog
+                    categoryId={item._id}
+                    getFoodData={getFoodData}
                   />
-                ))}
+                  <FoodSection categoryId={item._id} />
+
+                  {/* {(foodData || []).map((food) => (
+                    <FoodCard
+                      key={food._id}
+                      {...food}
+                      categoryData={categoryData}
+                    />
+                  ))} */}
+                </div>
               </div>
-            </div>
+            ))}
           </div>
         )}
 

@@ -12,20 +12,29 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
+import axios from "axios";
 
-export default function AddDishDialog({ onAdd }) {
+export default function AddDishDialog({ categoryId, getFoodData }) {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [desc, setDesc] = useState("");
   const [image, setImage] = useState("");
 
-  const addDish = () => {
-    if (!name || !price) return;
-    onAdd({ name, price, desc, image });
-    setName("");
-    setPrice("");
-    setDesc("");
-    setImage("");
+  const addDish = async () => {
+    try {
+      const res = await axios.post(`http://localhost:1000/food`, {
+        foodname: name,
+        ingredients: desc,
+        price: price,
+        image: "jjjj",
+        categoryId: categoryId,
+      });
+      console.log(res, "response");
+
+      getFoodData(categoryId);
+    } catch (err) {
+      alert(err);
+    }
   };
 
   return (
