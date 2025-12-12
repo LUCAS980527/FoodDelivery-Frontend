@@ -9,7 +9,7 @@ export function FoodSection() {
   const getFoodData = async (categoryId) => {
     try {
       const response = await axios.get(
-        `http://localhost:1000/food/${categoryId}`
+        `https://food-delivery-backtend.onrender.com/food/${categoryId}`
       );
       setFoodData(response.data);
       console.log("data", response.data);
@@ -19,7 +19,7 @@ export function FoodSection() {
   };
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    getFoodData();
+    getFoodData(categoryId);
   }, []);
   return (
     <div>

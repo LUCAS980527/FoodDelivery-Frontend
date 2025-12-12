@@ -22,13 +22,16 @@ export default function AddDishDialog({ categoryId, getFoodData }) {
 
   const addDish = async () => {
     try {
-      const res = await axios.post(`http://localhost:1000/food`, {
-        foodname: name,
-        ingredients: desc,
-        price: price,
-        image: "jjjj",
-        categoryId: categoryId,
-      });
+      const res = await axios.post(
+        `https://food-delivery-backtend.onrender.com/food`,
+        {
+          foodname: name,
+          ingredients: desc,
+          price: price,
+          image: image,
+          categoryId: categoryId,
+        }
+      );
       console.log(res, "response");
 
       getFoodData(categoryId);

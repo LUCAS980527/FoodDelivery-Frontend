@@ -18,7 +18,7 @@ export default function LoginPage() {
   const loginUser = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:1000/authentication/login",
+        "https://food-delivery-backtend.onrender.com/authentication/login",
         { email, password }
       );
       console.log("response", response);
@@ -83,7 +83,7 @@ export default function LoginPage() {
       </div>
 
       <Button
-        className="w-full h-10 bg-black text-white rounded-md font-medium hover:bg-gray-900 transition-colors mt-2"
+        className="w-full h-10 bg-black text-white cursor-pointer rounded-md font-medium hover:bg-gray-900 transition-colors mt-2"
         onClick={handleLogin}
       >
         Login

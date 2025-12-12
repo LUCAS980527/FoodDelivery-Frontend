@@ -37,7 +37,7 @@ export default function CombinedSignUp() {
   const createUser = async (email, password) => {
     try {
       const response = await axios.post(
-        "http://localhost:1000/authentication/signup",
+        "https://food-delivery-backtend.onrender.com/authentication/signup",
         {
           email,
           password,
