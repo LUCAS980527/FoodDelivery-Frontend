@@ -2,123 +2,41 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import SignUpLayout from "./SignUpLayout";
-import Mail from "@/app/_components/mail";
-import PasswordTwo from "@/app/_components/password";
-import axios from "axios";
+import Step1 from "../_components/Steps/step1";
+import Step2 from "../_components/Steps/step2";
 
-export default function CombinedSignUp() {
+export default function Page() {
   const router = useRouter();
   const [step, setStep] = useState(1);
 
-  const [email, setEmail] = useState("");
-  const [emailError, setEmailError] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+  });
 
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [apiError, setApiError] = useState("");
-
-  const handleNext = () => {
-    if (!email) {
-      setEmailError("Please enter your email");
-      return;
+  const increaseStep = (data) => {
+    if (data) {
+      setFormData((prev) => ({ ...prev, ...data }));
     }
 
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!regex.test(email)) {
-      setEmailError("Please enter a valid email");
-      return;
-    }
-    setEmailError("");
-    setStep(2);
-  };
-
-  const createUser = async (email, password) => {
-    try {
-      const response = await axios.post(
-        "https://food-delivery-backtend.onrender.com/authentication/signup",
-        {
-          email,
-          password,
-        }
-      );
-
+    if (step === 2) {
       router.push("/login");
-    } catch (err) {
-      if (err.response?.data) {
-        setApiError(err.response.data);
-      } else {
-        setApiError("Something went wrong. Please try again.");
-      }
+      return;
     }
+
+    setStep((prev) => prev + 1);
   };
 
-  const handleFinish = async () => {
-    if (!password) {
-      setPasswordError("Please enter your password");
-      return;
-    }
-    if (password.length < 8) {
-      setPasswordError("Password must be at least 8 characters");
-      return;
-    }
-    if (password !== confirmPassword) {
-      setPasswordError("Passwords do not match");
-      return;
-    }
-
-    setPasswordError("");
-
-    await createUser(email, password);
-  };
+  const reduceStep = () => setStep((prev) => prev - 1);
 
   return (
-    <div>
-      {step === 1 && (
-        <SignUpLayout
-          title="Create your account"
-          subtitle="Sign up to explore your favorite dishes."
-        >
-          <div>
-            <Mail value={email} onChange={setEmail} />
-            {emailError && (
-              <p className="text-red-500 text-sm mt-1">{emailError}</p>
-            )}
-          </div>
-          <button
-            onClick={handleNext}
-            className="w-full h-10 bg-black text-white rounded-md font-medium hover:bg-gray-900 transition-colors mt-2"
-          >
-            Next
-          </button>
-        </SignUpLayout>
-      )}
-
+    <div className="w-screen h-screen justify-center items-center flex">
+      {step === 1 && <Step1 increaseStep={increaseStep} />}
       {step === 2 && (
-        <SignUpLayout
-          title="Create a strong password"
-          subtitle="Create a strong password with letters, numbers."
-        >
-          <PasswordTwo
-            password={password}
-            confirmPassword={confirmPassword}
-            setPassword={setPassword}
-            setConfirmPassword={setConfirmPassword}
-          />
-          {passwordError && (
-            <p className="text-red-500 text-sm mt-1">{passwordError}</p>
-          )}
-
-          {apiError && <p className="text-red-500 text-sm">{apiError}</p>}
-
-          <button
-            onClick={handleFinish}
-            className="w-full h-10 bg-black text-white rounded-md font-medium hover:bg-gray-900 transition-colors mt-2"
-          >
-            Finish
-          </button>
-        </SignUpLayout>
+        <Step2
+          increaseStep={increaseStep}
+          reduceStep={reduceStep}
+          email={formData.email}
+        />
       )}
     </div>
   );
