@@ -176,7 +176,7 @@ export default function Step3({ reduceStep }) {
 
       <div className="w-1/2 h-full p-3">
         <img
-          src="/Delivery.svg"
+          src="/delivery.png"
           alt="auth illustration"
           className="w-[2440px] h-full object-cover rounded-lg"
         />
